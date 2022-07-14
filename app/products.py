@@ -18,31 +18,35 @@ def addProduct () :
    image=req_Json['image']
    store_id=req_Json['store_id']
    
-   Filter={"name":name}
+   Filter={"name":name, 'store_id':ObjectId(store_id)}
    if data.count_documents(Filter):
-     return "This product already exists. Try another one."
+      result= "This product already exists. Try another one."
+      print (result)
+      
    else: 
-      data.insert_one({"name":name, "price":price, "image":image, "store_id":store_id })
-      return 'Product inserted successfully.'
+      data.insert_one({"name":name, "price":price, "image":image, "store_id":ObjectId(store_id) })
+      result = data.find_one({'name':name, 'store_id':ObjectId(store_id)},{'_id':1})
+      print(result)
+   return json.dumps(result, indent=4, default = json_util.default)
 #########################################################################################
 
-@app.route('/edit_product', methods =['GET','POST'])
+@app.route('/edit_product', methods =['PUT'])
 def edit_product () :
-   
+   data = db.product
    req_Json= request.json
    ID=req_Json['ID']
    name=req_Json['name']
    price=req_Json['price']
    image=req_Json['image']
-
-   data = db.product.update_one({"_id":ObjectId(ID)}, 
+   
+   data.update_one({"_id":ObjectId(ID)}, 
    {   "$set": {"name":name, "price":price, "image":image }  } )
 
    return 'Product updated successfully.'
 
 #########################################################################################
 
-@app.route('/delete_product', methods = ['GET'])
+@app.route('/delete_product', methods = ['DELETE'])
 def delete_product():
     req_Json= request.json
     ID=req_Json['ID']
@@ -51,15 +55,15 @@ def delete_product():
 
 #########################################################################################
 
-@app.route('/viewAllProducts', methods = ['GET'])
-def viewAllProducts():
-    list=[]
-    req_Json= request.json
-    ID=req_Json['ID']
+@app.route('/viewAllProducts/<ID>', methods = ['GET'])
+def viewAllProducts(ID):
+    list0=[]
+    #req_Json= request.json
+    #ID=req_Json['ID']
     data = db.product                              
 
     for result in data.find({"store_id":ObjectId(ID)},{"store_id":0}):
-      list.append(result)
-    print(list)
-    return json.dumps(list, indent=4, default=json_util.default)
+      list0.append(result)
+    print(list0)
+    return json.dumps(list0, indent=4, default=json_util.default)
 ###########################################################################################
