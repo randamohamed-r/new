@@ -26,32 +26,32 @@ except:
 
 ###################       General Information      ###############
 
-@app.route('/advice_titles', methods = ['GET'])
-def get_advice_title():
+@app.route('/advice_titles/<language>', methods = ['GET'])
+def get_advice_title(language):
   list = [ ]
   data = db.advice
-  req_Json= request.json
-  language=req_Json['language']
+  #req_Json= request.json
+  #language=req_Json['language']
 
   if language == 'arabic' :
-    for result in data.find({},{'arabicTitle':1}):
+    for result in data.find({},{'_id':1,'arabicTitle':1, 'image':1}):
       list.append(result)
     print(list)
     return json.dumps(list, indent=4, default=json_util.default)
   elif language == 'english':
-    for result in data.find({},{ 'englishTitle':1}):
+    for result in data.find({},{'_id':1, 'englishTitle':1, 'image':1}):
       list.append(result)
     print(list)
     return json.dumps(list, indent=4, default=json_util.default)
 ###############################################################################################
 
-@app.route('/adviceDetail', methods =['GET'])
-def get_advice () :
+@app.route('/adviceDetail/<language>/<ID>', methods =['GET'])
+def get_advice (language,ID) :
   data = db.advice
   
   req_Json= request.json
-  language=req_Json['language']
-  ID=req_Json['ID']
+  #language=req_Json['language']
+  #ID=req_Json['ID']
 
   if language == 'arabic':
     result = data.find_one({'_id':ObjectId(ID)},{'_id':0, 'adviceInArabic':1})
@@ -63,33 +63,33 @@ def get_advice () :
     return json.dumps(result, indent=4, default=json_util.default)
 ###############################################################################################
 
-@app.route('/article_titles', methods = ['GET'])
-def get_article_title():
+@app.route('/article_titles/<language>', methods = ['GET'])
+def get_article_title(language):
   list=[]
   data = db.article
 
   req_Json= request.json
-  language=req_Json['language']
+  #language=req_Json['language']
 
   if language == 'arabic' :
-    for result in data.find({},{ 'arabicTitle':1}):
+    for result in data.find({},{ '_id':1,'arabicTitle':1, 'image':1}):
       list.append(result)
     print(list)
     return json.dumps(list, indent=4, default=json_util.default)
   elif language == 'english':
-    for result in data.find({},{ 'englishTitle':1}):
+    for result in data.find({},{'_id':1, 'englishTitle':1, 'image':1}):
       list.append(result)
     print(list)
     return json.dumps(list, indent=4, default=json_util.default)
 ###############################################################################################
 
-@app.route('/articleDetail', methods =['GET'])
-def get_article () :
+@app.route('/articleDetail/<language>/<ID>', methods =['GET'])
+def get_article (language,ID) :
   data = db.article
 
   req_Json= request.json
-  language=req_Json['language']
-  ID=req_Json['ID'] 
+  #language=req_Json['language']
+  #ID=req_Json['ID'] 
 
   if language == 'arabic':
     result = data.find_one({'_id':ObjectId(ID)},{'_id':0,'articleInArabic':1})
@@ -102,6 +102,3 @@ def get_article () :
 ###############################################################################################
 
   
-#app.run(debug=True)
-
-
